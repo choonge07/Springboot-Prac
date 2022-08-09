@@ -1,18 +1,22 @@
 package com.example.intermediate.domain;
 
+import com.example.intermediate.domain.heart.CommentHeart;
+import com.example.intermediate.domain.heart.PostHeart;
+import com.example.intermediate.domain.heart.SubCommentHeart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static javax.persistence.FetchType.*;
 
 @Builder
 @Getter

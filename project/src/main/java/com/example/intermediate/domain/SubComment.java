@@ -1,6 +1,7 @@
 package com.example.intermediate.domain;
 
 import com.example.intermediate.controller.request.SubCommentRequestDto;
+import com.example.intermediate.domain.heart.SubCommentHeart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,12 +9,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Entity
 @Getter
-@Table(name = "sub_comment")
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubComment extends Timestamped {
@@ -32,6 +34,8 @@ public class SubComment extends Timestamped {
     @ManyToOne(fetch = LAZY)
     private Member member;
 
+    @OneToMany(mappedBy = "subComment", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubCommentHeart> subCommentHearts;
     public void update(SubCommentRequestDto requestDto) {
         this.content = requestDto.getContent();
     }

@@ -1,21 +1,24 @@
 package com.example.intermediate.service;
 
-import com.example.intermediate.controller.response.MemberResponseDto;
+import com.example.intermediate.controller.response.*;
+import com.example.intermediate.domain.Comment;
 import com.example.intermediate.domain.Member;
-import com.example.intermediate.domain.RefreshToken;
+import com.example.intermediate.domain.Post;
 import com.example.intermediate.controller.request.LoginRequestDto;
 import com.example.intermediate.controller.request.MemberRequestDto;
-import com.example.intermediate.controller.response.ResponseDto;
 import com.example.intermediate.controller.request.TokenDto;
 import com.example.intermediate.jwt.TokenProvider;
+import com.example.intermediate.repository.CommentRepository;
 import com.example.intermediate.repository.MemberRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.example.intermediate.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,8 @@ public class MemberService {
   private final PasswordEncoder passwordEncoder;
 //  private final AuthenticationManagerBuilder authenticationManagerBuilder;
   private final TokenProvider tokenProvider;
+  private final PostRepository postRepository;
+  private final CommentRepository commentRepository;
 
   @Transactional
   public ResponseDto<?> createMember(MemberRequestDto requestDto) {
@@ -86,6 +91,8 @@ public class MemberService {
     );
   }
 
+
+
 //  @Transactional
 //  public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 //    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
@@ -123,6 +130,65 @@ public class MemberService {
     return tokenProvider.deleteRefreshToken(member);
   }
 
+  @Transactional
+  public ResponseDto<?> myPage(HttpServletRequest request) {
+    if (null == request.getHeader("Refresh-Token")) {
+      return ResponseDto.fail("NOT_FOUND", "로그인이 필요합니다.");
+    }
+    if (null == request.getHeader("Authorization")) {
+      return ResponseDto.fail("NOT_FOUND", "로그인이 필요합니다.");
+    }
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+    }
+//    List<Comment> commentList = commentRepository.findByMemberId(member.getId());
+//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//    for (Comment comment : commentList) {
+//      commentResponseDtoList.add(
+//              CommentResponseDto.builder()
+//                      .id(comment.getId())
+//                      .author(comment.getMember().getNickname())
+//                      .content(comment.getContent())
+//                      .createdAt(comment.getCreatedAt())
+//                      .modifiedAt(comment.getModifiedAt())
+//                      .build()
+//      );
+//    }
+
+    List<Post> postList = postRepository.findByMemberId(member.getId());
+    List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+
+
+    for (Post post : postList) {
+      postResponseDtoList.add(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .content(post.getContent())
+                      .author(post.getMember().getNickname())
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+    } // 포스트 불러오는거까진 했음!
+
+    return ResponseDto.success(
+            MyPageResponseDto.builder()
+                    .nickname(member.getNickname())
+                    .postList(postResponseDtoList)
+                    .build()
+    );
+  }
+  @Transactional
+  public Member validateMember(HttpServletRequest request) {
+    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+      return null;
+    }
+    return tokenProvider.getMemberFromAuthentication();
+  }
+
   @Transactional(readOnly = true)
   public Member isPresentMember(String nickname) {
     Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
@@ -134,5 +200,6 @@ public class MemberService {
     response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
     response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
   }
+
 
 }

@@ -4,12 +4,16 @@ import com.example.intermediate.controller.request.CommentRequestDto;
 
 import javax.persistence.*;
 
+import com.example.intermediate.domain.heart.CommentHeart;
+import com.example.intermediate.domain.heart.PostHeart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @Getter
@@ -32,6 +36,9 @@ public class Comment extends Timestamped {
 
   @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
   private List<SubComment> subComments;
+
+  @OneToMany(mappedBy = "comment", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CommentHeart> commentHearts;
 
   @Column(nullable = false)
   private String content;

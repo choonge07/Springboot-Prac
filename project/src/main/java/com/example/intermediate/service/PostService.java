@@ -70,6 +70,7 @@ public class PostService {
     }
 
     List<Comment> commentList = commentRepository.findAllByPost(post);
+    System.out.println(post);
     List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
     for (Comment comment : commentList) {
