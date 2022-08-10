@@ -13,6 +13,7 @@ import com.example.intermediate.repository.CommentRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import com.example.intermediate.repository.SubCommentRepository;
@@ -78,6 +79,8 @@ public class CommentService {
 
     List<Comment> commentList = commentRepository.findAllByPost(post);
     List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//    List<SubCommentResponseDto> subCommentResponseDtoList = new ArrayList<>();
+    // 대댓글 작업 -> memberservice mypage 작업
 
     for (Comment comment : commentList) {
       commentResponseDtoList.add(
@@ -85,6 +88,7 @@ public class CommentService {
               .id(comment.getId())
               .author(comment.getMember().getNickname())
               .content(comment.getContent())
+              .subCommentList(subCommentRepository.findAllByCommentId(comment.getId()).stream().map(SubCommentResponseDto::new).collect(Collectors.toList()))
               .createdAt(comment.getCreatedAt())
               .modifiedAt(comment.getModifiedAt())
               .build()

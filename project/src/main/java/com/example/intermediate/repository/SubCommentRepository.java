@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface SubCommentRepository extends JpaRepository<SubComment, Long> {
 
     List<SubComment> findAllByComment(Comment comment);
+
+    List<SubComment> findAllByCommentId(Long commentId);
+
+    List<SubComment> findByMemberIdAndCommentId(Long id, Long commentId);
 }

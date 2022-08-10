@@ -2,6 +2,7 @@ package com.example.intermediate.domain;
 
 import com.example.intermediate.controller.request.PostRequestDto;
 import com.example.intermediate.domain.heart.PostHeart;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Post extends Timestamped {
   @Column(nullable = false)
   private String content;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "post", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
 
@@ -36,6 +38,7 @@ public class Post extends Timestamped {
   @ManyToOne(fetch = LAZY)
   private Member member;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "post", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostHeart> postHearts;
 

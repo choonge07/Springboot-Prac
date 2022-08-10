@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import com.example.intermediate.domain.heart.CommentHeart;
 import com.example.intermediate.domain.heart.PostHeart;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,9 +35,11 @@ public class Comment extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private Post post;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
   private List<SubComment> subComments;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "comment", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CommentHeart> commentHearts;
 

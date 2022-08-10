@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class PostResponseDto {
   private Long id;
   private String title;
-  private String content;
   private String author;
+  private String content;
   private List<CommentResponseDto> commentResponseDtoList;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;

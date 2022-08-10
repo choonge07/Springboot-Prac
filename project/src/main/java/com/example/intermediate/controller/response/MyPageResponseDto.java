@@ -19,9 +19,7 @@ import java.util.List;
 public class MyPageResponseDto {
     private String nickname;
     private List<PostResponseDto> postList;
-    private List<Comment> commentList;
-    private List<PostHeart> postHearts;
-    private List<CommentHeart> commentHearts;
-    private List<SubCommentHeart> subCommentHearts;
-
+    private List<CommentResponseDto> commentList;
+    private List<PostHeartResponseDto> postHearts;
+    private List<CommentHeartResponseDto> commentHearts;
 }
